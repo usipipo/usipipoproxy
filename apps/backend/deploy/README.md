@@ -16,7 +16,7 @@ Before deploying, ensure you have:
 
 ```bash
 # 1. Navigate to deploy directory
-cd /path/to/usipipo-backend/deploy
+cd /path/to/usipipo/apps/backend/deploy
 
 # 2. Copy service file to systemd directory
 sudo cp usipipo-backend.service /etc/systemd/system/usipipo-backend.service
@@ -25,8 +25,8 @@ sudo cp usipipo-backend.service /etc/systemd/system/usipipo-backend.service
 sudo nano /etc/systemd/system/usipipo-backend.service
 
 # 4. Create logs directory
-sudo mkdir -p /path/to/usipipo-backend/logs
-sudo chown <USER>:<GROUP> /path/to/usipipo-backend/logs
+sudo mkdir -p /path/to/usipipo/apps/backend/logs
+sudo chown <USER>:<GROUP> /path/to/usipipo/apps/backend/logs
 
 # 5. Reload systemd and enable service
 sudo systemctl daemon-reload
@@ -47,7 +47,7 @@ Open the service file and replace these placeholders:
 |-------------|-------------|---------|
 | `<SYSTEM_USER>` | Linux user to run the service | `mowgli`, `usipipo`, `www-data` |
 | `<SYSTEM_GROUP>` | Linux group for the service | `mowgli`, `usipipo`, `www-data` |
-| `<PATH_TO_USISIPO_BACKEND>` | Absolute path to backend directory | `/home/mowgli/usipipo/usipipo-backend` |
+| `<PATH_TO_USISIPO_BACKEND>` | Absolute path to backend directory | `/home/mowgli/usipipo/apps/backend` |
 
 ### Finding Your User/Group
 
@@ -203,13 +203,13 @@ sudo systemctl restart usipipo-backend
 
 ```bash
 # Verify user/group ownership
-ls -la /path/to/usipipo-backend
+ls -la /path/to/usipipo/apps/backend
 
 # Fix ownership
-sudo chown -R <USER>:<GROUP> /path/to/usipipo-backend
+sudo chown -R <USER>:<GROUP> /path/to/usipipo/apps/backend
 
 # Verify .env file permissions (should be 600)
-chmod 600 /path/to/usipipo-backend/.env
+chmod 600 /path/to/usipipo/apps/backend/.env
 ```
 
 #### Database connection failures
@@ -222,7 +222,7 @@ sudo systemctl status postgresql
 psql -h localhost -U <user> -d usipipo
 
 # Verify DATABASE_URL in .env
-cat /path/to/usipipo-backend/.env | grep DATABASE_URL
+cat /path/to/usipipo/apps/backend/.env | grep DATABASE_URL
 ```
 
 #### Redis connection failures
@@ -235,7 +235,7 @@ sudo systemctl status redis
 redis-cli ping
 
 # Verify REDIS_URL in .env
-cat /path/to/usipipo-backend/.env | grep REDIS_URL
+cat /path/to/usipipo/apps/backend/.env | grep REDIS_URL
 ```
 
 ### Service Restarts Continuously
@@ -286,7 +286,7 @@ curl -w "@curl-format.txt" -o /dev/null -s http://localhost:8001/health
 sudo systemctl stop usipipo-backend
 
 # 2. Update code (git pull, rsync, etc.)
-cd /path/to/usipipo-backend
+cd /path/to/usipipo/apps/backend
 git pull
 
 # 3. Update dependencies
@@ -313,7 +313,7 @@ curl http://localhost:8001/health
 sudo systemctl stop usipipo-backend
 
 # 2. Revert code
-cd /path/to/usipipo-backend
+cd /path/to/usipipo/apps/backend
 git revert HEAD
 
 # 3. Revert migrations (if needed)
@@ -366,5 +366,5 @@ This prevents dropped connections during deployments or restarts.
 For issues or questions:
 
 1. Check logs: `sudo journalctl -u usipipo-backend -f`
-2. Review documentation: https://github.com/uSipipo-Team/usipipo-backend
+2. Review documentation: https://github.com/uSipipo-Team/usipipo
 3. Open an issue on GitHub

@@ -454,7 +454,7 @@ Expected: All return HTTP 200 (or 201/401 for auth endpoints with valid reasons)
 **Step 2: Run existing test suite**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-backend
+cd /home/mowgli/usipipo/apps/backend
 source .venv/bin/activate
 pytest tests/ -v --tb=short 2>&1 | tail -20
 ```

@@ -483,7 +483,7 @@ No action needed. Existing agents continue working with their `SERVER_ID`.
 ## Related Documentation
 
 - [Agent Deployment Guide](DEPLOYMENT.md)
-- [Backend API Documentation](https://github.com/uSipipo-Team/usipipo-backend/wiki)
+- [Backend API Documentation](https://github.com/uSipipo-Team/usipipo/wiki)
 - [Auto-Registration Design Doc](../../usipipo-docs/plans/agent/2026-03-29-agent-auto-registration-design.md)
 - [Auto-Registration Implementation Plan](../../usipipo-docs/plans/agent/2026-03-29-agent-auto-registration-plan.md)
 

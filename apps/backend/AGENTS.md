@@ -23,8 +23,8 @@
 
 ```bash
 # 1. Clone and setup
-git clone https://github.com/uSipipo-Team/usipipo-backend.git
-cd usipipo-backend
+git clone https://github.com/uSipipo-Team/usipipo.git
+cd apps/backend
 
 # 2. Install dependencies (uv package manager)
 uv sync --dev
@@ -671,7 +671,7 @@ docker-compose exec backend bash
 ### uSipipo Links
 
 - **GitHub Organization**: [uSipipo-Team](https://github.com/uSipipo-Team)
-- **Shared Library**: [usipipo-commons](https://github.com/uSipipo-Team/usipipo-commons)
+- **Shared Library**: [usipipo-commons](https://github.com/uSipipo-Team/usipipo)
 - **PyPI Package**: [usipipo-commons](https://pypi.org/project/usipipo-commons/)
 - **Telegram Bot**: [@uSipipo_Bot](https://t.me/uSipipo_Bot)
 - **Landing Page**: [usipipo.com](https://usipipo.com)
@@ -680,8 +680,8 @@ docker-compose exec backend bash
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/uSipipo-Team/usipipo-backend/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/uSipipo-Team/usipipo-backend/discussions)
+- **Issues**: [GitHub Issues](https://github.com/uSipipo-Team/usipipo/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/uSipipo-Team/usipipo/discussions)
 - **Email**: dev@usipipo.com
 
 ---

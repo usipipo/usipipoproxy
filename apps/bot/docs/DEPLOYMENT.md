@@ -4,7 +4,7 @@
 
 ```bash
 # Clonar repositorio
-git clone https://github.com/uSipipo-Team/usipipo-telegram-bot.git
+git clone https://github.com/uSipipo-Team/usipipo.git
 cd usipipo-telegram-bot
 
 # Instalar dependencias

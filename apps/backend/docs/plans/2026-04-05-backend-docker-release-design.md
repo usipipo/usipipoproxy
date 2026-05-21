@@ -16,7 +16,7 @@ Add automated Docker image build/push to ghcr.io on tag releases, and restructur
 - Type Check (Mypy)
 - Test (Pytest - unit tests only)
 - Security (Bandit)
-- Docker build/push to `ghcr.io/usipipo-team/usipipo-backend`
+- Docker build/push to `ghcr.io/usipipo-team/usipipo-apps-backend`
 
 **Image tags:** `v0.X.0` + `latest`
 

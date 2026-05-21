@@ -48,7 +48,7 @@ tests/e2e/
 Install dev dependencies:
 
 ```bash
-cd usipipo-backend
+cd apps/backend
 uv sync --group dev
 ```
 
@@ -264,7 +264,7 @@ Add to your GitHub Actions workflow:
 ```yaml
 - name: Run E2E Tests
   run: |
-    cd usipipo-backend
+    cd apps/backend
     uv sync --group dev
     pytest tests/e2e/ -v --tb=short
 ```

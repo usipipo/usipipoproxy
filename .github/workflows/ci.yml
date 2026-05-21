@@ -1,0 +1,30 @@
+name: CI
+# Root workflow: delegates to infra/ci/ci.yml
+on:
+  push:
+    branches: [main, develop, "feature/*"]
+    tags: ['v*']
+  pull_request:
+    branches: [main, develop]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python-check:
+    uses: ./.github/workflows/python-check.yml
+
+  docker-build:
+    uses: ./.github/workflows/docker-build.yml
+    needs: python-check
+    if: ${{ contains(github.ref, 'refs/tags/') }}
+
+  workspace-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+      - run: |
+          uv sync
+          uv run --project apps/bot python -c "import usipipo_commons; print('workspace ok')"

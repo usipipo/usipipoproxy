@@ -41,8 +41,8 @@
 
 ```bash
 # Clonar
-git clone https://github.com/uSipipo-Team/usipipo-telegram-bot.git
-cd usipipo-telegram-bot
+git clone https://github.com/uSipipo-Team/usipipo.git
+cd apps/bot
 
 # Instalar dependencias
 uv sync --dev
@@ -61,10 +61,10 @@ uv run python -m src
 
 ```bash
 # Build
-docker build -t usipipo-telegram-bot .
+docker build -t usipipo-apps-telegram .
 
 # Ejecutar
-docker run --env-file .env usipipo-telegram-bot
+docker run --env-file .env usipipo-apps-telegram
 ```
 
 ## License

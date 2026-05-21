@@ -99,7 +99,7 @@ jobs:
       - name: Extract metadata
         id: meta
         run: |
-          echo "IMAGE=ghcr.io/usipipo-team/usipipo-telegram-bot" >> $GITHUB_OUTPUT
+          echo "IMAGE=ghcr.io/usipipo-team/usipipo-apps-telegram" >> $GITHUB_OUTPUT
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5

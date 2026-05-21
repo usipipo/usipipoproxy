@@ -30,9 +30,9 @@
 
 ## 🔗 Related Repositories
 
-- **[usipipo-commons](https://github.com/uSipipo-Team/usipipo-commons)** - Shared library with domain entities
+- **[usipipo-commons](https://github.com/uSipipo-Team/usipipo)** - Shared library with domain entities
 - **[usipipo-landing](https://github.com/uSipipo-Team/usipipo-landing)** - Landing page
-- **[usipipo-telegram-bot](https://github.com/uSipipo-Team/usipipo-telegram-bot)** - Telegram bot
+- **[usipipo-telegram-bot](https://github.com/uSipipo-Team/usipipo)** - Telegram bot
 - **[usipipo-miniapp-web](https://github.com/uSipipo-Team/usipipo-miniapp-web)** - Mini App frontend
 
 ---
@@ -41,8 +41,8 @@
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/uSipipo-Team/usipipo-backend.git
-   cd usipipo-backend
+   git clone https://github.com/uSipipo-Team/usipipo.git
+   cd apps/backend
    ```
 
 2. **Install dependencies**
@@ -69,8 +69,8 @@
 
 ## 🆘 Support
 
-- **GitHub Issues:** https://github.com/uSipipo-Team/usipipo-backend/issues
-- **Documentation:** https://github.com/uSipipo-Team/usipipo-backend/wiki
+- **GitHub Issues:** https://github.com/uSipipo-Team/usipipo/issues
+- **Documentation:** https://github.com/uSipipo-Team/usipipo/wiki
 - **Email:** support@usipipo.com
 
 ---

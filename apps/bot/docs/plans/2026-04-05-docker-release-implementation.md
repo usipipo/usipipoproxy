@@ -4,7 +4,7 @@
 
 **Goal:** Add automated Docker image build and push to GitHub Container Registry on tag releases.
 
-**Architecture:** Multi-stage Dockerfile for minimal image, GitHub Actions workflow triggered on `v*` tags, pushes to `ghcr.io/usipipo-team/usipipo-telegram-bot` with version and latest tags.
+**Architecture:** Multi-stage Dockerfile for minimal image, GitHub Actions workflow triggered on `v*` tags, pushes to `ghcr.io/usipipo-team/usipipo-apps-telegram` with version and latest tags.
 
 **Tech Stack:** Docker, GitHub Actions, uv, Python 3.13-slim, ghcr.io
 

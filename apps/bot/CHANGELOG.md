@@ -1013,6 +1013,6 @@ CONSUMPTION_PRICE_PER_MB_USD = 0.000244140625  # 0.25 / 1024
 ---
 
 **Links:**
-- **Repository:** https://github.com/uSipipo-Team/usipipo-telegram-bot
-- **Releases:** https://github.com/uSipipo-Team/usipipo-telegram-bot/releases
-- **PRs:** https://github.com/uSipipo-Team/usipipo-telegram-bot/pulls
+- **Repository:** https://github.com/uSipipo-Team/usipipo
+- **Releases:** https://github.com/uSipipo-Team/usipipo/releases
+- **PRs:** https://github.com/uSipipo-Team/usipipo/pulls

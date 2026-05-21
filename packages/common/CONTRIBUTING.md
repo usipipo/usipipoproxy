@@ -44,8 +44,8 @@ Optional but recommended:
 1. **Fork and clone the repository:**
 
    ```bash
-   git clone https://github.com/uSipipo-Team/usipipo-commons.git
-   cd usipipo-commons
+   git clone https://github.com/uSipipo-Team/usipipo.git
+   cd packages/common
    ```
 
 2. **Install Python 3.13 (if not already installed):**
@@ -533,7 +533,7 @@ MAJOR.MINOR.PATCH
 
 If you have questions or need help:
 
-- Check existing [issues](https://github.com/uSipipo-Team/usipipo-commons/issues)
+- Check existing [issues](https://github.com/uSipipo-Team/usipipo/issues)
 - Read the [README.md](README.md)
 - Review [CHANGELOG.md](CHANGELOG.md) for version history
 - Contact: dev@usipipo.com

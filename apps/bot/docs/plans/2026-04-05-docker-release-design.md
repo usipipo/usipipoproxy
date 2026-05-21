@@ -13,8 +13,8 @@ Add automated Docker image build and push to GitHub Container Registry (ghcr.io)
 - Push of git tag matching `v*` (e.g., `v0.10.0`)
 
 ### Image Tags
-- `ghcr.io/usipipo-team/usipipo-telegram-bot:v0.10.0` (specific version)
-- `ghcr.io/usipipo-team/usipipo-telegram-bot:latest` (always latest stable)
+- `ghcr.io/usipipo-team/usipipo-apps-telegram:v0.10.0` (specific version)
+- `ghcr.io/usipipo-team/usipipo-apps-telegram:latest` (always latest stable)
 
 ### Dockerfile (Multi-stage)
 - **Stage 1 (build):** Install dependencies with `uv sync --frozen`

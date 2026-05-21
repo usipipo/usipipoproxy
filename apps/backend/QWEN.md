@@ -81,7 +81,7 @@ src/
 ### Local Development
 
 ```bash
-cd usipipo-backend
+cd apps/backend
 
 # Install dependencies
 uv sync --dev
@@ -107,7 +107,7 @@ uv run uvicorn src.main:app --reload --env-file .env
 
 ```bash
 # Build
-docker build -t usipipo-backend .
+docker build -t usipipo-apps-backend .
 
 # Run with environment
 docker run --env-file .env -p 8000:8000 usipipo-backend
@@ -329,7 +329,7 @@ uv run ruff format .
 
 ### Runtime
 
-- `usipipo-commons @ file:///home/mowgli/usipipo/usipipo-commons`
+- `usipipo-commons @ file:///home/mowgli/usipipo/packages/common`
 - `fastapi>=0.109.0`
 - `uvicorn[standard]>=0.27.0`
 - `pydantic-settings>=2.0.0`
@@ -363,7 +363,7 @@ uv run ruff format .
 
 ## 🔗 Links
 
-- **GitHub:** https://github.com/uSipipo-Team/usipipo-backend
+- **GitHub:** https://github.com/uSipipo-Team/usipipo
 - **PyPI (commons):** https://pypi.org/project/usipipo-commons/
 - **Migration Tracker:** ../plans/MIGRATION-PROGRESS.md
 

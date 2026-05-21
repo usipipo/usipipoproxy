@@ -148,10 +148,10 @@ python -c 'from cryptography.fernet import Fernet; print(Fernet.generate_key().d
 
 ### 🔗 Related Projects
 
-- **Backend:** https://github.com/uSipipo-Team/usipipo-backend
-- **Commons:** https://github.com/uSipipo-Team/usipipo-commons
+- **Backend:** https://github.com/uSipipo-Team/usipipo
+- **Commons:** https://github.com/uSipipo-Team/usipipo
 - **Docs:** https://github.com/uSipipo-Team/usipipo-docs
-- **Telegram Bot:** https://github.com/uSipipo-Team/usipipo-telegram-bot
+- **Telegram Bot:** https://github.com/uSipipo-Team/usipipo
 
 ---
 

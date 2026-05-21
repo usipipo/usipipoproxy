@@ -4,8 +4,8 @@
 
 ```bash
 # Clonar repositorio
-git clone https://github.com/uSipipo-Team/usipipo-backend.git
-cd usipipo-backend
+git clone https://github.com/uSipipo-Team/usipipo.git
+cd apps/backend
 
 # Instalar dependencias
 uv sync --dev
@@ -22,10 +22,10 @@ uv run python -m src
 
 ```bash
 # Build
-docker build -t usipipo-backend .
+docker build -t usipipo-apps-backend .
 
 # Ejecutar
-docker run --env-file .env -p 8000:8000 usipipo-backend
+docker run --env-file .env -p 8000:8000 usipipo-apps-backend
 ```
 
 ## Environment Variables

@@ -165,8 +165,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/usipipo-team/usipipo-backend:${{ steps.version.outputs.VERSION }}
-            ghcr.io/usipipo-team/usipipo-backend:latest
+            ghcr.io/usipipo-team/usipipo-apps-backend:${{ steps.version.outputs.VERSION }}
+            ghcr.io/usipipo-team/usipipo-apps-backend:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 ```

@@ -4,7 +4,7 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/usipipo-commons.svg)](https://pypi.org/project/usipipo-commons/)
 [![PyPI Downloads](https://img.shields.io/pypi/dm/usipipo-commons.svg)](https://pypi.org/project/usipipo-commons/)
-[![License](https://img.shields.io/pypi/l/usipipo-commons.svg)](https://github.com/uSipipo-Team/usipipo-commons/blob/main/LICENSE)
+[![License](https://img.shields.io/pypi/l/usipipo-commons.svg)](https://github.com/uSipipo-Team/usipipo/blob/main/LICENSE)
 [![Python Version](https://img.shields.io/pypi/pyversions/usipipo-commons.svg)](https://pypi.org/project/usipipo-commons/)
 
 ## Overview
@@ -20,8 +20,8 @@
 
 ### What Projects Use It
 
-- [`usipipo-backend`](https://github.com/uSipipo-Team/usipipo-backend) - FastAPI backend API
-- [`usipipo-telegram-bot`](https://github.com/uSipipo-Team/usipipo-telegram-bot) - Telegram bot
+- [`usipipo-backend`](https://github.com/uSipipo-Team/usipipo) - FastAPI backend API
+- [`usipipo-telegram-bot`](https://github.com/uSipipo-Team/usipipo) - Telegram bot
 - [`usipipo-miniapp-web`](https://github.com/uSipipo-Team/usipipo-miniapp-web) - Telegram Mini App
 - [`usipipo-landing`](https://github.com/uSipipo-Team/usipipo-landing) - Marketing site
 
@@ -38,15 +38,15 @@ pip install usipipo-commons
 ### From GitHub (Development)
 
 ```bash
-pip install git+https://github.com/uSipipo-Team/usipipo-commons.git
+pip install git+https://github.com/uSipipo-Team/usipipo.git
 ```
 
 ### Local Development
 
 ```bash
 # Clone the repository
-git clone https://github.com/uSipipo-Team/usipipo-commons.git
-cd usipipo-commons
+git clone https://github.com/uSipipo-Team/usipipo.git
+cd packages/common
 
 # Install with uv (recommended)
 uv sync --dev
@@ -1310,8 +1310,8 @@ usipipo_commons/
 
 ```bash
 # Clone the repository
-git clone https://github.com/uSipipo-Team/usipipo-commons.git
-cd usipipo-commons
+git clone https://github.com/uSipipo-Team/usipipo.git
+cd packages/common
 
 # Install dependencies with uv (recommended)
 uv sync --dev
@@ -1422,8 +1422,8 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed contribution guidelines.
 
 | Project | Description | Status |
 |---------|-------------|--------|
-| [usipipo-backend](https://github.com/uSipipo-Team/usipipo-backend) | FastAPI backend API | 🟢 Active |
-| [usipipo-telegram-bot](https://github.com/uSipipo-Team/usipipo-telegram-bot) | Telegram bot | 🟡 Refactoring |
+| [usipipo-backend](https://github.com/uSipipo-Team/usipipo) | FastAPI backend API | 🟢 Active |
+| [usipipo-telegram-bot](https://github.com/uSipipo-Team/usipipo) | Telegram bot | 🟡 Refactoring |
 | [usipipo-miniapp-web](https://github.com/uSipipo-Team/usipipo-miniapp-web) | Telegram Mini App | 🟡 Pending |
 | [usipipo-landing](https://github.com/uSipipo-Team/usipipo-landing) | Marketing site | 🟢 Production |
 | [usipipo-vpn-android](https://github.com/uSipipo-Team/usipipo-vpn-android) | Android VPN app | 🟢 Production |

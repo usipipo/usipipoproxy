@@ -503,14 +503,14 @@ key = VpnKey(user_id=UUID("369a4d7f-e8ef-4d81-84f1-483363f81d00"))  # UUID
 
 ## Links
 
-- [GitHub Repository](https://github.com/uSipipo-Team/usipipo-commons)
+- [GitHub Repository](https://github.com/uSipipo-Team/usipipo)
 - [PyPI Package](https://pypi.org/project/usipipo-commons/)
-- [Issue Tracker](https://github.com/uSipipo-Team/usipipo-commons/issues)
-- [Latest Release v0.11.0](https://github.com/uSipipo-Team/usipipo-commons/releases/tag/v0.11.0)
+- [Issue Tracker](https://github.com/uSipipo-Team/usipipo/issues)
+- [Latest Release v0.11.0](https://github.com/uSipipo-Team/usipipo/releases/tag/v0.11.0)
 
 ---
 
-[Unreleased]: https://github.com/uSipipo-Team/usipipo-commons/compare/v0.11.0...HEAD
-[0.11.0]: https://github.com/uSipipo-Team/usipipo-commons/releases/tag/v0.11.0
-[0.10.0]: https://github.com/uSipipo-Team/usipipo-commons/releases/tag/v0.10.0
-[0.9.0]: https://github.com/uSipipo-Team/usipipo-commons/compare/v0.8.0...v0.9.0
+[Unreleased]: https://github.com/uSipipo-Team/usipipo/compare/v0.11.0...HEAD
+[0.11.0]: https://github.com/uSipipo-Team/usipipo/releases/tag/v0.11.0
+[0.10.0]: https://github.com/uSipipo-Team/usipipo/releases/tag/v0.10.0
+[0.9.0]: https://github.com/uSipipo-Team/usipipo/compare/v0.8.0...v0.9.0

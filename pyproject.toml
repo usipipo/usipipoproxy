@@ -1,0 +1,16 @@
+[project]
+name = "usipipo"
+version = "0.0.0"
+description = "uSipipo Monorepo — todos los proyectos en un solo lugar"
+requires-python = ">=3.13"
+license = {text = "MIT"}
+
+[tool.uv.workspace]
+members = [
+    "apps/backend",
+    "apps/bot",
+    "packages/common",
+]
+
+[tool.uv.sources]
+usipipo-commons = { workspace = true }

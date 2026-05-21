@@ -15,7 +15,7 @@
 ### Task 1: Remove Redis Singleton from jwt.py
 
 **Files:**
-- Modify: `/home/mowgli/usipipo/usipipo-backend/src/shared/security/jwt.py`
+- Modify: `/home/mowgli/usipipo/apps/backend/src/shared/security/jwt.py`
 - Test: Run existing backend tests
 
 **Step 1: Understand current structure**
@@ -112,7 +112,7 @@ Change to just:
 **Step 4: Run backend tests**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-backend
+cd /home/mowgli/usipipo/apps/backend
 uv run pytest tests/ -v --tb=short 2>&1 | tail -30
 ```
 
@@ -130,7 +130,7 @@ Expected: Service starts successfully with 2 workers
 **Step 6: Commit**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-backend
+cd /home/mowgli/usipipo/apps/backend
 git add src/shared/security/jwt.py src/main.py
 git commit -m "fix: replace Redis singleton with per-call connections in JWT module
 
@@ -147,8 +147,8 @@ git commit -m "fix: replace Redis singleton with per-call connections in JWT mod
 ### Task 2: Add Retry Wrapper to APIClient
 
 **Files:**
-- Modify: `/home/mowgli/usipipo/usipipo-telegram-bot/src/infrastructure/api_client.py`
-- Test: `/home/mowgli/usipipo/usipipo-telegram-bot/test_all_handlers.py`
+- Modify: `/home/mowgli/usipipo/apps/bot/src/infrastructure/api_client.py`
+- Test: `/home/mowgli/usipipo/apps/bot/test_all_handlers.py`
 
 **Step 1: Add retry constants and wrapper method**
 
@@ -301,7 +301,7 @@ No new imports needed (asyncio is used inline).
 **Step 7: Commit**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-telegram-bot
+cd /home/mowgli/usipipo/apps/bot
 git add src/infrastructure/api_client.py
 git commit -m "feat: add retry logic with exponential backoff to APIClient
 
@@ -318,7 +318,7 @@ git commit -m "feat: add retry logic with exponential backoff to APIClient
 ### Task 3: Add Token Refresh to TokenStorage
 
 **Files:**
-- Modify: `/home/mowgli/usipipo/usipipo-telegram-bot/src/infrastructure/token_storage.py`
+- Modify: `/home/mowgli/usipipo/apps/bot/src/infrastructure/token_storage.py`
 
 **Step 1: Add refresh_token method**
 
@@ -368,7 +368,7 @@ logger = get_logger("token_storage")
 **Step 3: Commit**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-telegram-bot
+cd /home/mowgli/usipipo/apps/bot
 git add src/infrastructure/token_storage.py
 git commit -m "feat: add token refresh fallback to TokenStorage
 
@@ -384,7 +384,7 @@ git commit -m "feat: add token refresh fallback to TokenStorage
 ### Task 4: Run Full Handler Test Suite
 
 **Files:**
-- Run: `/home/mowgli/usipipo/usipipo-telegram-bot/test_all_handlers.py`
+- Run: `/home/mowgli/usipipo/apps/bot/test_all_handlers.py`
 
 **Step 1: Restart both services**
 
@@ -397,7 +397,7 @@ sleep 3
 **Step 2: Run handler tests**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-telegram-bot
+cd /home/mowgli/usipipo/apps/bot
 .venv/bin/python test_all_handlers.py 2>&1
 ```
 
@@ -414,7 +414,7 @@ TOTAL RESULTS:
 **Step 3: Run original integration tests**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-telegram-bot
+cd /home/mowgli/usipipo/apps/bot
 .venv/bin/python test_bot_backend_integration.py 2>&1
 ```
 
@@ -448,7 +448,7 @@ Expected: Normal operation, no JWT decode errors
 **Step 1: Run full backend test suite**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-backend
+cd /home/mowgli/usipipo/apps/backend
 uv run pytest tests/ -v --tb=short 2>&1 | tail -40
 ```
 
@@ -459,7 +459,7 @@ Expected: All tests pass
 **Step 1: Run bot linting**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-telegram-bot
+cd /home/mowgli/usipipo/apps/bot
 .venv/bin/python -m ruff check src/ 2>&1
 .venv/bin/python -m ruff format --check src/ 2>&1
 ```
@@ -469,11 +469,11 @@ cd /home/mowgli/usipipo/usipipo-telegram-bot
 **Step 1: Tag the fix**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-backend
+cd /home/mowgli/usipipo/apps/backend
 git add -A
 git commit -m "chore: final changes for 401 fix"
 
-cd /home/mowgli/usipipo/usipipo-telegram-bot
+cd /home/mowgli/usipipo/apps/bot
 git add -A
 git commit -m "chore: final changes for 401 fix"
 ```

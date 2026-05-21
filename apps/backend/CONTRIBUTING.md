@@ -31,10 +31,10 @@ Thank you for your interest in contributing to uSipipo Backend! This document pr
 ```bash
 # Clone your fork
 git clone https://github.com/YOUR_USERNAME/usipipo-backend.git
-cd usipipo-backend
+cd apps/backend
 
 # Add upstream remote
-git remote add upstream https://github.com/uSipipo-Team/usipipo-backend.git
+git remote add upstream https://github.com/uSipipo-Team/usipipo.git
 ```
 
 ### 2. Set Up Development Environment
@@ -421,8 +421,8 @@ Look for issues labeled:
 ## 📞 Getting Help
 
 - **Documentation**: Check [docs/](docs/) directory
-- **Existing Issues**: Search [GitHub Issues](https://github.com/uSipipo-Team/usipipo-backend/issues)
-- **Discussions**: Use [GitHub Discussions](https://github.com/uSipipo-Team/usipipo-backend/discussions)
+- **Existing Issues**: Search [GitHub Issues](https://github.com/uSipipo-Team/usipipo/issues)
+- **Discussions**: Use [GitHub Discussions](https://github.com/uSipipo-Team/usipipo/discussions)
 - **Email**: dev@usipipo.com
 
 ---

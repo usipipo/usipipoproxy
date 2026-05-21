@@ -1,9 +1,12 @@
 __pycache__/
 *.py[cod]
 *$py.class
-.venv/
 .mypy_cache/
 .ruff_cache/
-*.log
+.pytest_cache/
+logs/
+temp/
+static/uploads/
 .env
 !.env.example
+*.service

@@ -16,7 +16,7 @@
 
 **Branch:** Create a new branch for this fix:
 ```bash
-cd /home/mowgli/usipipo/usipipo-backend
+cd /home/mowgli/usipipo/apps/backend
 git checkout -b fix/vpn-key-server-id-persistence
 ```
 

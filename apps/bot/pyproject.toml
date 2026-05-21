@@ -7,7 +7,7 @@ license = {text = "MIT"}
 authors = [{name = "uSipipo Team", email = "usipipo@gmail.com"}]
 
 dependencies = [
-    "usipipo-commons>=0.15.0",
+    "usipipo-commons>=0.21.0",
     "python-telegram-bot>=21.0",
     "pydantic-settings>=2.0.0",
     "redis>=7.3.0",

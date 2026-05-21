@@ -7,8 +7,8 @@ services:
       context: .
       dockerfile: Dockerfile
       target: production
-    image: usipipo-backend:latest
-    container_name: usipipo-backend
+     image: usipipo-apps-backend:latest
+    container_name: usipipo-apps-backend
     ports:
       - "8000:8000"
     environment:
@@ -124,6 +124,6 @@ volumes:
   redis_data:
     name: usipipo-redis-data
   backend_logs:
-    name: usipipo-backend-logs
+    name: usipipo-apps-backend-logs
   pgadmin_data:
     name: usipipo-pgadmin-data

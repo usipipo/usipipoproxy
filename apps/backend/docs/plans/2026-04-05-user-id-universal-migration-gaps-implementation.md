@@ -80,7 +80,7 @@ __all__ = ["AdminUserInfo", "AdminKeyInfo", "AdminOperationResult", "ServerStatu
 **Step 3: Run commons tests**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-commons
+cd /home/mowgli/usipipo/packages/common
 uv run pytest tests/ -v
 ```
 
@@ -89,7 +89,7 @@ Expected: All tests pass.
 **Step 4: Commit**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-commons
+cd /home/mowgli/usipipo/packages/common
 git add usipipo_commons/domain/entities/admin_user_info.py usipipo_commons/domain/entities/admin.py
 git commit -m "refactor: change AdminUserInfo.user_id from int to UUID"
 ```
@@ -144,7 +144,7 @@ class AdminKeyInfo:
 **Step 2: Commit**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-commons
+cd /home/mowgli/usipipo/packages/common
 git add usipipo_commons/domain/entities/admin_key_info.py
 git commit -m "refactor: change AdminKeyInfo.user_id from int to UUID"
 ```
@@ -203,7 +203,7 @@ class Balance:
 **Step 2: Commit**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-commons
+cd /home/mowgli/usipipo/packages/common
 git add usipipo_commons/domain/entities/balance.py
 git commit -m "refactor: change Balance.user_id from int to UUID"
 ```
@@ -229,7 +229,7 @@ Keep everything else unchanged.
 **Step 2: Commit**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-commons
+cd /home/mowgli/usipipo/packages/common
 git add usipipo_commons/domain/entities/data_package.py
 git commit -m "refactor: change DataPackage.user_id from int to UUID"
 ```
@@ -251,7 +251,7 @@ Change:
 **Step 2: Commit**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-commons
+cd /home/mowgli/usipipo/packages/common
 git add usipipo_commons/domain/entities/ticket.py
 git commit -m "refactor: change Ticket user_id and resolved_by from int to UUID"
 ```
@@ -270,7 +270,7 @@ Change `from_user_id: int` → `from_user_id: uuid.UUID`.
 **Step 2: Commit**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-commons
+cd /home/mowgli/usipipo/packages/common
 git add usipipo_commons/domain/entities/ticket_message.py
 git commit -m "refactor: change TicketMessage.from_user_id from int to UUID"
 ```
@@ -289,7 +289,7 @@ Change `version = "0.19.0"` → `version = "0.20.0"`
 **Step 2: Build and publish**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-commons
+cd /home/mowgli/usipipo/packages/common
 uv build
 uv publish
 ```
@@ -297,7 +297,7 @@ uv publish
 **Step 3: Commit**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-commons
+cd /home/mowgli/usipipo/packages/common
 git add pyproject.toml
 git commit -m "chore: bump version to 0.20.0 for user_id UUID migration"
 ```
@@ -383,7 +383,7 @@ def from_dict(cls, data: dict) -> "AdminAuditLogModel":
 **Step 4: Commit**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-backend
+cd /home/mowgli/usipipo/apps/backend
 git add src/infrastructure/persistence/models/admin_audit_log_model.py
 git commit -m "refactor: migrate AdminAuditLogModel telegram_id columns to UUID"
 ```
@@ -461,7 +461,7 @@ def from_dict(cls, data: dict) -> "StaffRoleModel":
 **Step 4: Commit**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-backend
+cd /home/mowgli/usipipo/apps/backend
 git add src/infrastructure/persistence/models/staff_role_model.py
 git commit -m "refactor: add admin_id UUID to StaffRoleModel, make telegram_id nullable"
 ```
@@ -502,7 +502,7 @@ resolved_by: Mapped[uuid.UUID | None] = mapped_column(
 **Step 2: Commit**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-backend
+cd /home/mowgli/usipipo/apps/backend
 git add src/infrastructure/persistence/models/ticket_model.py
 git commit -m "refactor: fix TicketModel FK from telegram_id to users.id"
 ```
@@ -517,7 +517,7 @@ git commit -m "refactor: fix TicketModel FK from telegram_id to users.id"
 **Step 1: Generate migration**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-backend
+cd /home/mowgli/usipipo/apps/backend
 uv run alembic revision -m "user_id_universal_gaps"
 ```
 
@@ -649,7 +649,7 @@ def downgrade() -> None:
 **Step 3: Commit**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-backend
+cd /home/mowgli/usipipo/apps/backend
 git add migrations/versions/2026_04_05_0001_user_id_universal_gaps.py
 git commit -m "migration: add user_id universal gaps alembic migration"
 ```
@@ -668,14 +668,14 @@ Change `usipipo-commons>=0.19.0` → `usipipo-commons>=0.20.0`
 **Step 2: Lock and sync**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-backend
+cd /home/mowgli/usipipo/apps/backend
 uv sync
 ```
 
 **Step 3: Commit**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-backend
+cd /home/mowgli/usipipo/apps/backend
 git add pyproject.toml
 git commit -m "chore: bump usipipo-commons to 0.20.0"
 ```
@@ -756,7 +756,7 @@ async def assign_wallet(
 **Step 2: Commit**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-backend
+cd /home/mowgli/usipipo/apps/backend
 git add src/core/application/services/wallet_management_service.py
 git commit -m "refactor: remove telegram_id param from wallet_management_service"
 ```
@@ -830,7 +830,7 @@ async def _create_new_wallet(
 **Step 2: Commit**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-backend
+cd /home/mowgli/usipipo/apps/backend
 git add src/core/application/services/wallet_pool_service.py
 git commit -m "refactor: remove telegram_id param from wallet_pool_service"
 ```
@@ -883,7 +883,7 @@ invoice_result = await self._send_stars_invoice(
 **Step 2: Commit**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-backend
+cd /home/mowgli/usipipo/apps/backend
 git add src/core/application/services/subscription_payment_service.py
 git commit -m "refactor: use user_id in subscription_payment_service, lookup telegram_id internally"
 ```
@@ -959,7 +959,7 @@ async def register_referral_by_user_id(
 **Step 2: Commit**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-backend
+cd /home/mowgli/usipipo/apps/backend
 git add src/core/application/services/referral_service.py
 git commit -m "refactor: change referral_service to use user_id instead of telegram_id"
 ```
@@ -987,7 +987,7 @@ Add `import uuid` at top if not present.
 **Step 2: Commit**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-backend
+cd /home/mowgli/usipipo/apps/backend
 git add src/core/application/services/admin_key_service.py
 git commit -m "refactor: use user.id instead of user.telegram_id in admin_key_service"
 ```
@@ -1024,7 +1024,7 @@ user_id=user.id,
 **Step 2: Commit**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-backend
+cd /home/mowgli/usipipo/apps/backend
 git add src/core/application/services/admin_user_service.py
 git commit -m "refactor: use user.id instead of user.telegram_id in admin_user_service"
 ```
@@ -1069,7 +1069,7 @@ audit_log = AdminAuditLogModel(
 **Step 2: Commit**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-backend
+cd /home/mowgli/usipipo/apps/backend
 git add src/core/application/services/admin_vpn_key_service.py
 git commit -m "refactor: use admin_id UUID in admin_vpn_key_service audit logging"
 ```
@@ -1094,7 +1094,7 @@ No changes needed in user_service.py — it already correctly separates auth flo
 **Step 2: Verify**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-backend
+cd /home/mowgli/usipipo/apps/backend
 git diff src/core/application/services/user_service.py
 ```
 
@@ -1113,7 +1113,7 @@ Expected: No changes.
 **Step 1: Search for callers of changed methods**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-backend
+cd /home/mowgli/usipipo/apps/backend
 grep -rn "assign_wallet\|get_or_assign_wallet\|register_referral_by_telegram_id\|_send_stars_invoice" src/infrastructure/api/v1/routes/
 ```
 
@@ -1127,7 +1127,7 @@ For each route that calls:
 **Step 3: Commit**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-backend
+cd /home/mowgli/usipipo/apps/backend
 git add src/infrastructure/api/v1/routes/
 git commit -m "refactor: update routes to use user_id instead of telegram_id"
 ```
@@ -1145,7 +1145,7 @@ git commit -m "refactor: update routes to use user_id instead of telegram_id"
 **Step 1: Find auth handler**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-telegram-bot
+cd /home/mowgli/usipipo/apps/bot
 grep -rn "telegram_id\|user_id\|jwt\|token" src/bot/handlers/ | head -30
 ```
 
@@ -1164,7 +1164,7 @@ The JWT already contains `{sub: user_id, telegram_id: ...}`. The bot should:
 **Step 3: Commit**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-telegram-bot
+cd /home/mowgli/usipipo/apps/bot
 git add src/
 git commit -m "refactor: use user_id from JWT in bot auth flow"
 ```
@@ -1191,7 +1191,7 @@ Replace any `user_id=int` with `user_id=uuid4()` for:
 **Step 2: Run tests**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-commons
+cd /home/mowgli/usipipo/packages/common
 uv run pytest tests/ -v
 ```
 
@@ -1200,7 +1200,7 @@ Expected: All passing.
 **Step 3: Commit**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-commons
+cd /home/mowgli/usipipo/packages/common
 git add tests/
 git commit -m "test: update commons tests for UUID user_id"
 ```
@@ -1215,7 +1215,7 @@ git commit -m "test: update commons tests for UUID user_id"
 **Step 1: Find affected test files**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-backend
+cd /home/mowgli/usipipo/apps/backend
 grep -rn "telegram_id" tests/unit/ | grep -v "__pycache__"
 ```
 
@@ -1229,7 +1229,7 @@ For each test file:
 **Step 3: Run tests**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-backend
+cd /home/mowgli/usipipo/apps/backend
 uv run pytest tests/unit/ -v
 ```
 
@@ -1238,7 +1238,7 @@ Expected: All passing.
 **Step 4: Commit**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-backend
+cd /home/mowgli/usipipo/apps/backend
 git add tests/
 git commit -m "test: update backend tests for user_id UUID migration"
 ```
@@ -1250,7 +1250,7 @@ git commit -m "test: update backend tests for user_id UUID migration"
 **Step 1: Run mypy**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-backend
+cd /home/mowgli/usipipo/apps/backend
 uv run mypy src/
 ```
 
@@ -1261,7 +1261,7 @@ If errors remain, fix them with targeted type annotations (not `# type: ignore` 
 **Step 2: Commit any fixes**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-backend
+cd /home/mowgli/usipipo/apps/backend
 git add src/
 git commit -m "fix: resolve mypy errors from user_id migration"
 ```
@@ -1273,7 +1273,7 @@ git commit -m "fix: resolve mypy errors from user_id migration"
 **Step 1: Run full backend test suite**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-backend
+cd /home/mowgli/usipipo/apps/backend
 uv run pytest tests/ -v --tb=short
 ```
 
@@ -1282,14 +1282,14 @@ Expected: All passing.
 **Step 2: Push all changes**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-backend
+cd /home/mowgli/usipipo/apps/backend
 git push origin refactor/migrate-to-user-id-universal
 ```
 
 **Step 3: Create PR**
 
 ```bash
-cd /home/mowgli/usipipo/usipipo-backend
+cd /home/mowgli/usipipo/apps/backend
 gh pr create \
   --base main \
   --head refactor/migrate-to-user-id-universal \

@@ -384,9 +384,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🔗 Related Projects
 
-- **[usipipo-backend](https://github.com/uSipipo-Team/usipipo-backend)** - Central orchestrator (FastAPI)
-- **[usipipo-commons](https://github.com/uSipipo-Team/usipipo-commons)** - Shared library (PyPI)
-- **[usipipo-telegram-bot](https://github.com/uSipipo-Team/usipipo-telegram-bot)** - Telegram bot for user interaction
+- **[usipipo-backend](https://github.com/uSipipo-Team/usipipo)** - Central orchestrator (FastAPI)
+- **[usipipo-commons](https://github.com/uSipipo-Team/usipipo)** - Shared library (PyPI)
+- **[usipipo-telegram-bot](https://github.com/uSipipo-Team/usipipo)** - Telegram bot for user interaction
 - **[usipipo-docs](https://github.com/uSipipo-Team/usipipo-docs)** - Documentation portal
 
 ---

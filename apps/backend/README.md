@@ -156,8 +156,8 @@ src/
 
 ```bash
 # Clone the repository
-git clone https://github.com/uSipipo-Team/usipipo-backend.git
-cd usipipo-backend
+git clone https://github.com/uSipipo-Team/usipipo.git
+cd apps/backend
 
 # Install uv (if not installed)
 curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -189,13 +189,13 @@ The API will be available at `http://localhost:8000`
 
 Complete API documentation is available on our **GitHub Wiki**:
 
-👉 **[https://github.com/uSipipo-Team/usipipo-backend/wiki](https://github.com/uSipipo-Team/usipipo-backend/wiki)**
+👉 **[https://github.com/uSipipo-Team/usipipo/wiki](https://github.com/uSipipo-Team/usipipo/wiki)**
 
 **Wiki Pages:**
-- **[Home](https://github.com/uSipipo-Team/usipipo-backend/wiki)** - Quick start guide and overview
-- **[API Reference](https://github.com/uSipipo-Team/usipipo-backend/wiki/API-Reference)** - Complete endpoint reference (50+ endpoints)
-- **[Authentication](https://github.com/uSipipo-Team/usipipo-backend/wiki/Authentication)** - Auth guide with code examples
-- **[Error Codes](https://github.com/uSipipo-Team/usipipo-backend/wiki/Error-Codes)** - HTTP error reference
+- **[Home](https://github.com/uSipipo-Team/usipipo/wiki)** - Quick start guide and overview
+- **[API Reference](https://github.com/uSipipo-Team/usipipo/wiki/API-Reference)** - Complete endpoint reference (50+ endpoints)
+- **[Authentication](https://github.com/uSipipo-Team/usipipo/wiki/Authentication)** - Auth guide with code examples
+- **[Error Codes](https://github.com/uSipipo-Team/usipipo/wiki/Error-Codes)** - HTTP error reference
 
 ### 📄 Local Documentation
 
@@ -552,7 +552,7 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 ```bash
 # Fork the repository
 git clone https://github.com/YOUR_USERNAME/usipipo-backend.git
-cd usipipo-backend
+cd apps/backend
 
 # Create a feature branch
 git checkout -b feature/your-feature-name
@@ -610,17 +610,17 @@ SOFTWARE.
 ## 🔗 Links
 
 ### Documentation
-- **[GitHub Wiki](https://github.com/uSipipo-Team/usipipo-backend/wiki)** - Complete API documentation
-- **[API Reference](https://github.com/uSipipo-Team/usipipo-backend/wiki/API-Reference)** - 50+ endpoints documented
-- **[Authentication Guide](https://github.com/uSipipo-Team/usipipo-backend/wiki/Authentication)** - Auth with examples
-- **[Error Codes](https://github.com/uSipipo-Team/usipipo-backend/wiki/Error-Codes)** - HTTP error reference
+- **[GitHub Wiki](https://github.com/uSipipo-Team/usipipo/wiki)** - Complete API documentation
+- **[API Reference](https://github.com/uSipipo-Team/usipipo/wiki/API-Reference)** - 50+ endpoints documented
+- **[Authentication Guide](https://github.com/uSipipo-Team/usipipo/wiki/Authentication)** - Auth with examples
+- **[Error Codes](https://github.com/uSipipo-Team/usipipo/wiki/Error-Codes)** - HTTP error reference
 
 ### Project
 - **GitHub Organization:** [uSipipo-Team](https://github.com/uSipipo-Team)
-- **Backend Repository:** [usipipo-backend](https://github.com/uSipipo-Team/usipipo-backend)
-- **Shared Library:** [usipipo-commons](https://github.com/uSipipo-Team/usipipo-commons)
+- **Backend Repository:** [usipipo-backend](https://github.com/uSipipo-Team/usipipo)
+- **Shared Library:** [usipipo-commons](https://github.com/uSipipo-Team/usipipo)
 - **PyPI Package:** [usipipo-commons](https://pypi.org/project/usipipo-commons/)
-- **Latest Release:** [v0.4.0](https://github.com/uSipipo-Team/usipipo-backend/releases/tag/v0.4.0)
+- **Latest Release:** [v0.4.0](https://github.com/uSipipo-Team/usipipo/releases/tag/v0.4.0)
 
 ### Services
 - **Telegram Bot:** [@usipipobot](https://t.me/usipipobot)
@@ -631,7 +631,7 @@ SOFTWARE.
 ## 📞 Support
 
 - **Documentation:** See [docs/](docs/) directory
-- **Issues:** [GitHub Issues](https://github.com/uSipipo-Team/usipipo-backend/issues)
+- **Issues:** [GitHub Issues](https://github.com/uSipipo-Team/usipipo/issues)
 - **Email:** dev@usipipo.com
 
 ---

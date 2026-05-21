@@ -115,7 +115,7 @@ usipipo_commons/
 ### Local Development
 
 ```bash
-cd usipipo-commons
+cd packages/common
 
 # Install dependencies
 uv sync --dev
@@ -332,16 +332,16 @@ class VpnKey:
 
 ## 📚 Documentation
 
-- [GitHub Repository](https://github.com/uSipipo-Team/usipipo-commons)
+- [GitHub Repository](https://github.com/uSipipo-Team/usipipo)
 - [PyPI Package](https://pypi.org/project/usipipo-commons/)
-- [Issue Tracker](https://github.com/uSipipo-Team/usipipo-commons/issues)
+- [Issue Tracker](https://github.com/uSipipo-Team/usipipo/issues)
 - [Changelog](CHANGELOG.md)
 
 ---
 
 ## 🔗 Links
 
-- **GitHub:** https://github.com/uSipipo-Team/usipipo-commons
+- **GitHub:** https://github.com/uSipipo-Team/usipipo
 - **PyPI:** https://pypi.org/project/usipipo-commons/
 - **Latest Release:** v0.5.6 (2026-03-21)
 
