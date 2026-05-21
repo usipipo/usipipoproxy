@@ -1,0 +1,57 @@
+# =============================================================================
+# uSipipo Telegram Bot - Systemd Service
+# =============================================================================
+# Production-ready service configuration with security hardening
+# =============================================================================
+
+[Unit]
+Description=uSipipo Telegram Bot Service
+Documentation=https://github.com/uSipipo-Team/usipipo-telegram-bot
+After=network.target redis.service
+Wants=redis.service
+
+[Service]
+Type=exec
+
+# User and Group
+User=mowgli
+Group=mowgli
+
+# Working Directory
+WorkingDirectory=/home/mowgli/usipipo/usipipo-telegram-bot
+
+# Environment Configuration
+Environment="PATH=/home/mowgli/usipipo/usipipo-telegram-bot/.venv/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="VIRTUAL_ENV=/home/mowgli/usipipo/usipipo-telegram-bot/.venv"
+EnvironmentFile=/home/mowgli/usipipo/usipipo-telegram-bot/.env
+
+# Main Process
+ExecStart=/home/mowgli/usipipo/usipipo-telegram-bot/.venv/bin/python -m src
+
+# Graceful Shutdown
+TimeoutStopSec=30
+KillMode=mixed
+KillSignal=SIGTERM
+
+# Restart Policy
+Restart=always
+RestartSec=10
+
+# Security Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=false
+ReadWritePaths=/home/mowgli/usipipo/usipipo-telegram-bot/logs
+
+# Resource Limits
+LimitNOFILE=65536
+LimitNPROC=4096
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=usipipo-telegram-bot
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,48 @@
+[project]
+name = "usipipo-commons"
+version = "0.21.0"
+description = "Shared library for uSipipo ecosystem"
+readme = "README.md"
+requires-python = ">=3.13"
+license = {text = "MIT"}
+authors = [
+    {name = "uSipipo Team", email = "dev@usipipo.com"}
+]
+
+dependencies = [
+    "pydantic>=2.12.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=4.0.0",
+    "mypy>=1.0.0",
+    "ruff>=0.1.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["usipipo_commons"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"usipipo_commons/py.typed" = "usipipo_commons/py.typed"
+"usipipo_commons/domain/py.typed" = "usipipo_commons/domain/py.typed"
+"usipipo_commons/domain/entities/py.typed" = "usipipo_commons/domain/entities/py.typed"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/usipipo_commons",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.mypy]
+python_version = "3.13"
+warn_return_any = true
+warn_unused_configs = true
