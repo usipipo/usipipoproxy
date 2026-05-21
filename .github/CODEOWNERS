@@ -1,0 +1,21 @@
+# CODEOWNERS — uSipipo Monorepo
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# ── Default owners (everything) ───────────────────────────────────────────────
+*                     @usipipo @mowgli
+
+# ── App directories ──────────────────────────────────────────────────────────
+/apps/backend/          @usipipo
+/apps/bot/              @usipipo
+/apps/appweb/           @usipipo
+
+# ── Packages ─────────────────────────────────────────────────────────────────
+/packages/common/       @usipipo
+/packages/agent/        @usipipo
+
+# ── Infrastructure & CI ──────────────────────────────────────────────────────
+/infra/                 @usipipo
+/.github/               @usipipo
+
+# ── Docs ─────────────────────────────────────────────────────────────────────
+/docs/                  @usipipo
