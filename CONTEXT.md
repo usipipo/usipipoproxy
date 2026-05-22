@@ -546,3 +546,113 @@ No crea directorios reales. Si `DB_PATH` apunta a `./data/usipipo.db` y `/app/da
 9. Frontend compilado y servido por Caddy
 10. Webhook Telegram configurado (long polling o `setWebhook` a `https://usipipo.dpdns.org/bot/telegram`)
 11. Prueba e2e: auth → JWT → crear dispositivo → WireGuard peer activo → `.conf` descargado → cliente conectado
+
+---
+
+## 19. DECISIONES DE NEGOCIO (adicionales)
+
+### Modelo de monetización
+
+| Etapa            | Condición                         | Precio                    |
+|------------------|-----------------------------------|---------------------------|
+| Beta             | Primeros 10 usuarios (familia/amigos) | Free                     |
+| Crecimiento      | Usuarios 11–499                   | Free                      |
+| Lanzamiento      | Usuarios ≥ 500                    | $1.99/mes nuevos          |
+| Early adopters   | Marca `early_adopter` en `users`  | $0.40/mes (80% descuento) |
+
+**Rate de conversión días ↔ USDT:**
+```
+rate = 1.99 / 30 = 0.06633 USDT/día
+dias = monto_ingresado / rate
+```
+Early adopter paga `monto * 0.20` por el mismo cómputo de días.
+
+### Data cap
+
+- Límite: **60 GB/mes por usuario**
+- Exceso: limitación de velocidad (no corte, no cargo extra)
+
+### Pasarela de pagos: TronDealer V2
+
+- **Proveedor:** TronDealer (operado por QvaPay)
+- **Stablecoins:** USDT y USDC
+- **Red de depósito única:** BSC BEP-20 USDT
+  - Contrato USDT BEP-20: `0x55d398326f99059fF775485485246999027B3197955`
+  - 18 decimales (importante: no hardcodear 6)
+- **Fee:** 0.4% sobre monto ≥ $10 · flat $0.30 si monto < $10 · 0% con QvaPay custody
+- **Sin KYC** para empezar
+- **Webhook firma:** header `X-Signature-256` → HMAC-SHA256(raw body, webhook_secret)
+- **Lifecycle:** `detected → confirmed → notified → swept`
+- **Notificado = pago confirmado** — en este estado se activa la suscripción
+
+### Flujo de recarga (prepago en días)
+
+1. Usuario elige cantidad de días o monto en USDT en el frontend.
+2. Frontend envía `POST /proxy/payments/invoice` al backend con `{days, user_id}`.
+3. Backend calcula monto USDT (`days × rate`) aplica descuento early_adopter si corresponde.
+4. Backend llama a `POST https://www.trondealer.com/api/v2/wallets/assign` con `label=order-{uuid}` → recibe dirección BSC.
+5. Backend registra el invoice/order en BD con estado `pending`.
+6. Backend responde al frontend con `{address, amount_usdt, qr_data, expires_at}`.
+7. Frontend genera código QR (el QR lo genera el frontend a partir de la dirección y monto) y lo muestra al usuario.
+8. Usuario envía USDT BEP-20 a la dirección desde su wallet (Trust Wallet, MetaMask, etc.).
+9. Webhook `notified` de TronDealer → Backend valida firma HMAC → marca invoice `confirmed` → acredita `days` al usuario.
+10. Webhook `swept` → Backend registra en bitácora (reconciliación).
+
+### Tiempos y timeouts
+
+| Evento                         | Valor                              |
+|-------------------------------|------------------------------------|
+| Expiración de wallet/invoice   | 30 minutos desde la generación     |
+| Tiempo de confirmación BSC     | ~15 bloques (configurable en TronDealer) |
+| Tiempo de sweep automático     | Minutos después de confirmación    |
+
+### Tablas BD nuevas requeridas (pagos)
+
+```sql
+-- Invoices: cada intento de recarga
+CREATE TABLE IF NOT EXISTS invoices (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id       INTEGER NOT NULL REFERENCES users(id),
+    td_wallet_label TEXT NOT NULL UNIQUE,  -- label usado en /wallets/assign
+    amount_usdt   REAL NOT NULL,           -- monto solicitado en USDT
+    days          INTEGER NOT NULL,        -- días acreditados si pago se confirma
+    status        TEXT NOT NULL DEFAULT 'pending',  -- pending/confirmed/expired/failed
+    tx_hash       TEXT,                    -- tx on-chain desde webhook
+    td_order_id   TEXT UNIQUE,             -- id de orden TronDealer
+    created_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    confirmed_at  DATETIME,
+    sweep_at      DATETIME
+);
+CREATE INDEX idx_invoices_user ON invoices(user_id);
+CREATE INDEX idx_invoices_status ON invoices(status);
+CREATE INDEX idx_invoices_td_order ON invoices(td_order_id);
+
+-- Perfiles de suscripción extendidos (se agregarán columnas si es necesario)
+-- Alternativa: agregar credit_days y subscription_status a tabla users
+```
+
+### Campo `early_adopter` en tabla `users`
+
+Agregar columna a migración:
+
+```sql
+ALTER TABLE users ADD COLUMN early_adopter INTEGER NOT NULL DEFAULT 0;
+```
+
+Valores: `0` = normal, `1` = early adopter (descuento 80%).
+
+### Endpoints nuevos de pago (a agregar en backend)
+
+| Método | Ruta                    | Descripción                              |
+|--------|-------------------------|------------------------------------------|
+| POST   | `/proxy/payments/invoice` | Calcula monto y crea invoice TronDealer |
+| GET    | `/proxy/payments/invoices` | Historial de invoices del usuario       |
+| POST   | `/proxy/webhooks/trondealer` | Webhook de TronDealer (validar firma)   |
+
+### Seguridad del webhook
+
+1. Recibir body **raw** (no parsear antes de validar firma).
+2. `HMAC-SHA256(webhook_secret, raw_body)` en hex.
+3. Comparar con `X-Signature-256` usando `hmac.Equal` (timing-safe).
+4. Verificar `event.status == "notified"` antes de acreditar días.
+5. Usar `tx_hash + log_index` como clave idempotente en BD (evita doble acreditación por retries).
