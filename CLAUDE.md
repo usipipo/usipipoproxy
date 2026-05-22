@@ -18,7 +18,7 @@ El agente **debe leer** estos archivos antes de modificar cualquier parte del ba
 
 ```
 cmd/backend/main.go          — arranque del servidor, rutas, flags
-internal/wg/manager.go       — manejo de interfaces WireGuard prohibitivo modificar en caliente
+internal/wg/manager.go       — manejo de interfaces WireGuard (prohibido modificar sin análisis previo)
 internal/http/handlers/handlers.go — toda la lógica de API + middleware JWT
 
 pkg/models/models.go         — contratos de datos públicos
@@ -36,20 +36,26 @@ No modificar `docker-compose.yml` sin antes confirmar con el usuario (afecta pue
 - Modificar `handlers.go` para nuevos endpoints, cambios de validación, reformas.
 - Modificar `models.go` para agregar/alterar campos públicos (mantén `snake_case` en JSON).
 - Modificar `config.go` para variables de entorno nuevas (poner defaults sensatos).
-- Corregir bugs conocidos (ver §10 de AGENTS.md).
+- Corregir bugs conocidos (ver §11 de AGENTS.md).
 - **NUNCA** agregar dependencias nuevas en `go.mod` sin aprobación explícita del usuario.
+- Variables de entorno de pagos: `TD_API_KEY`, `TD_WEBHOOK_SECRET`, `WEBHOOK_BASE_URL` (definir en `config.go`, defaults sensatos).
+- Nunca liberar suscripción en estado `detected`; solo en `confirmed` o `notified`.
+- Endpoints de pago nuevos van bajo `/proxy/payments/*` y `/proxy/webhooks/trondealer`.
 
 ### Frontend React
 - Todo el código frontend (`src/`) está vacío — se puede implementar completamente desde cero.
 - Sigue estándares de `frontend-design` skill si está disponible.
+- El QR de pago se genera en el frontend a partir de la dirección BSC y monto USDT que entrega el backend.
 
 ### Infraestructura
-- Actualizar `docker-compose.yml` cuando se agregue servicio nuevo (ej: `wg-exporter` funcional).
+- Actualizar `docker-compose.yml` y `docker/.env.example` cuando se agregue variable nueva (ej: `TD_API_KEY`).
 - Modificar Dockerfiles en `docker/` cuando se requiera.
 
 ### No tocar sin permiso
 - Permisos WireGuard en `docker-compose.yml` — un error rompe la red.
-- Datos del VPS (IPs, credenciales) — están hardcodeados; cambios deben ser intencionales.
+- Datos del VPS (IPs, credenciales, TronDealer api_key) — están hardcodeados; cambios deben ser intencionales.
+- `x-api-key` de TronDealer: SOLO en backend, nunca en frontend ni mobile.
+- Cambios a tablas de BD pagos/invoices: confirmar con el usuario antes de tocar store.go migraciones.
 
 ---
 
@@ -65,8 +71,8 @@ No modificar `docker-compose.yml` sin antes confirmar con el usuario (afecta pue
 
 ## Referencias del proyecto
 
-- `CONTEXT.md` — documento amplio con todos los detalles técnicos
+- `CONTEXT.md` — documento amplio con todos los detalles técnicos (§19 incluye todo modelo de pagos TronDealer)
 - `AGENTS.md` — reglas y convenciones
 - `README.md` — siguiendo el formato de esta misma sección, de clase a Estructuras
-- `docker/.env.example` — todas las variables de entorno con valores por defecto
+- `docker/.env.example` — todas las variables de entorno con valores por defecto; agregar `TD_API_KEY`, `TD_WEBHOOK_SECRET` cuando se implementen pagos
 - `scripts/build.sh` — pipeline de compilación dockerizada
