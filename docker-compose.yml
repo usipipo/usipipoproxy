@@ -1,0 +1,68 @@
+version: "3.9"
+
+services:
+  wg-api:
+    image: usipipo/backend:${TAG:-latest}
+    container_name: usipipo-backend
+    restart: unless-stopped
+    volumes:
+      - wg-data:/app/data
+      - /run/wireguard:/run/wireguard:ro
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - DB_PATH=/app/data/usipipo.db
+      - WG_INTERFACE=wg0
+      - WG_ENDPOINT_PORT=64000
+      - WG_SUBNET=10.66.66.0/24
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_WEBHOOK_SECRET=${TELEGRAM_WEBHOOK_SECRET:-}
+      - JWT_SECRET=${JWT_SECRET}
+      - API_PORT=8001
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  frontend:
+    image: usipipo/frontend:${TAG:-latest}
+    container_name: usipipo-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    environment:
+      - VITE_API_BASE_URL=${VITE_API_BASE_URL:-http://localhost:8001}
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  wg-exporter:
+    image: usipipo/wg-exporter:${TAG:-latest}
+    container_name: usipipo-exporter
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    volumes:
+      - /run/wireguard:/run/wireguard:ro
+    environment:
+      - WG_INTERFACE=wg0
+      - METRICS_PORT=9100
+      - EXPORTER_POLL_INTERVAL=15s
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  wg-data:
