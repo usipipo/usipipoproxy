@@ -1,1 +1,0 @@
-"""uSipipo Telegram Bot package."""
