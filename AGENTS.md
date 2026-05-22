@@ -20,6 +20,7 @@ uSipipo Proxy es un servicio VPN WireGuard que permite a personas y empresas en 
 | Auth         | Telegram Login Web App — HMAC-SHA256 → JWT HS256                                                     |
 | Bot          | Telegram Bot API — webhook `POST /bot/telegram`                                                      |
 | Frontend     | Vite + React 19 + TypeScript + Tailwind CSS v4                                                       |
+| Pagos        | TronDealer V2 — USDT BEP-20 BSC, webhook HMAC-SHA256, auto-sweep                                    |
 | Infra        | Docker Compose (imágenes locales, sin Docker Hub) · Caddy reverse proxy · AlphaVPS Belgium (€4.50/mes) |
 | CI/CD        | GitHub Actions → GHCR (pendiente)                                                                    |
 
@@ -146,7 +147,44 @@ volumes:
 
 ---
 
-## 9. VPS y producción
+## 9. Pagos — TronDealer V2
+
+### Estrategia
+- **Prepagado en días:** usuario elige cantidad de días; monto USDT = días × `rate` (`$1.99/30 días = 0.06633 USDT/día`).
+- **Early adopters:** campo `early_adopter INTEGER DEFAULT 0` en tabla `users` → descuento 80% sobre monto pagado.
+- **Red de depósito:** BSC BEP-20 USDT · Contrato: `0x55d398326f99059fF775485246999027B3197955` (18 decimales).
+- **Expiración de invoice/wallet TronDealer:** 30 minutos desde generación.
+
+### Flujo técnico
+1. Backend → `POST /proxy/payments/invoice` con `{days, user_id}`
+2. Backend calcula monto, aplica descuento early_adopter si corresponde
+3. Backend llama a `POST https://www.trondealer.com/api/v2/wallets/assign` con `label=order-{uuid}` → recibe dirección BSC
+4. Backend registra invoice en BD (estado `pending`)
+5. Frontend genera QR a partir de dirección + monto → usuario escanea con wallet
+6. Usuario envía USDT BEP-20 a la dirección
+7. Webhook `notified` de TronDealer → valida `X-Signature-256` HMAC-SHA256 → marca `confirmed` → acredita días
+8. Webhook `swept` → registra en bitácora (reconciliación)
+
+### Endpoints nuevos
+| Método | Ruta                        | Descripción                   |
+|--------|----------------------------|-------------------------------|
+| POST   | `/proxy/payments/invoice`   | Crea invoice TronDealer       |
+| GET    | `/proxy/payments/invoices`  | Historial invoices del usuario|
+| POST   | `/proxy/webhooks/trondealer`| Webhook TronDealer (valida firma)|
+
+### Nuevas tablas BD
+- `invoices`: `id, user_id, td_wallet_label, amount_usdt, days, status, tx_hash, td_order_id, created_at, confirmed_at, sweep_at`
+- `users`: agregar columna `early_adopter INTEGER DEFAULT 0`
+
+### Reglas estrictas
+- **Nunca** liberar suscripción en estado `detected`. Solo en `confirmed`/`notified`.
+- **Idempotencia:** usar `tx_hash + log_index` como clave única en `invoices`.
+- `x-api-key` TronDealer SOLO en backend, nunca en frontend/mobile.
+- Webhook: devolver `200` inmediatamente; procesar evento de forma asíncrona si hay lógica pesada.
+
+---
+
+## 10. VPS y producción
 
 - **IP AlphaVPS**: `165.140.241.96`
 - **Dominio**: `usipipo.dpdns.org` (DuckDNS)
@@ -156,7 +194,7 @@ volumes:
 
 ---
 
-## 10. Bugs conocidos
+## 11. Bugs conocidos
 
 Ver §17 de CONTEXT.md. Resumen rápido:
 
@@ -166,10 +204,11 @@ Ver §17 de CONTEXT.md. Resumen rápido:
 | 2 | `docker/wg-exporter.Dockerfile` | `cmd/exporter/` no existe                    | pendiente   |
 | 3 | `internal/db/store.go`     | `ensureDir()` no crea directorios                 | pendiente   |
 | 4 | `frontend/src/*`           | Todo el código frontend está vacío               | pendiente   |
+| 5 | `§19 (pagos)`              | Endpoints de pago AÚN NO IMPLEMENTADOS            | pendiente   |
 
 ---
 
-## 11. Checklist de agentes antes de cualquier commit
+## 12. Checklist de agentes antes de cualquier commit
 
 - [ ] `go vet ./...` limpio
 - [ ] No hay `// TODO`, `// MVP`, `// fake` en el código Go
@@ -177,3 +216,4 @@ Ver §17 de CONTEXT.md. Resumen rápido:
 - [ ] `go.mod` y `go.sum` sincronizados
 - [ ] Correspondencia entre cambios y descripción del commit
 - [ ] Si se tocan handlers/DB/WG: revisar §5 y §6 de este archivo
+- [ ] Si se tocan pagos: revisar §9 y §19 de CONTEXT.md
