@@ -8,7 +8,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 IMAGE="golang:1.24-alpine"
-TAG="${TAG:-dev}"
+TAG="${TAG:-latest}"
 DOCKERFILE="$REPO_ROOT/docker/backend.Dockerfile"
 
 echo "══ uSipipo backend build — tag=$TAG ═══════════════════════════════════"

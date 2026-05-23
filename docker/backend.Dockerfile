@@ -3,6 +3,7 @@
 
 ARG GO_VERSION=1.24
 ARG ALPINE_VERSION=3.21
+ARG TARGETPLATFORM
 
 # ── Builder ──────────────────────────────────────────────────────────────────
 FROM golang:${GO_VERSION}-alpine${ALPINE_VERSION} AS builder
@@ -16,7 +17,7 @@ RUN go mod download
 
 # Compilar
 COPY . .
-RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build \
+RUN CGO_ENABLED=1 GOOS=linux GOARCH=$(echo $TARGETPLATFORM | sed 's/linux\///') go build \
     -ldflags "-s -w -X main.version=${TAG:-dev}" \
     -o /out/backend ./cmd/backend
 # ── Runner ──────────────────────────────────────────────────────────────────

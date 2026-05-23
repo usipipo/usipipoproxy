@@ -1,0 +1,20 @@
+# Build artifacts
+bin/
+dist/
+
+# Backups
+*.bak
+frontend.bak/
+
+# Code analysis index
+.codegraph/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo

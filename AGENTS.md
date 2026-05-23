@@ -42,7 +42,32 @@ require (
 
 ## 3. Convenciones de código
 
-### Go
+### Go — Principios SOLID y Clean Code
+
+Cada handler, struct y paquete debe adherirse a estos principios de forma explícita:
+
+| Principio | Regla concreta |
+|------------|----------------|
+| **S**ingle Responsibility | Cada handler/structure/método tiene una sola razón para cambiar. No mezclar lógica de pagos, auth y dispositivos en el mismo tipo. |
+| **O**pen/Closed | Abierto a extensión (tagged results, nuevos tipos), cerrado a modificación. Usar `type Switch` o funciones genéricas en lugar de modificar código existente para agregar un caso nuevo. |
+| **L**iskov Substitution | Los tipos que satisfacen una interfaz (ej: `PaymentStore`, `DeviceStore`) deben poder usarse intercambiablemente sin comprobar el tipo concreto. |
+| **I**nterface Segregation | Definir interfaces pequeñas y específicas aquí en el paquete que las consume, no interfaces grandes en el paquete que las implementa. Preferir 3 interfaces de 2 métodos a 1 interfaz de 6 métodos. |
+| **D**ependency Inversion | Depender de interfaces, no de structs concretas. Los constructores reciben interfaces (`AuthStore`, `PaymentStore`, `*wg.Manager`), nunca `*sql.DB` o `*Store` directamente en handlers. |
+
+#### Reglas de Clean Code adicionales
+
+- **Tamaño de archivo**: máximo 300 líneas por archivo `.go`. Si un archivo supera ese límite, dividirlo antes de agregar más código.
+- **Tamaño de función**: máximo 70 líneas. Las funciones largas deben descomponerse en helpers privados.
+- **Profundidad de anidación**: máximo 3 niveles de `if`/`for` anidados. Extraer a funciones auxiliares o usar early returns para aplanar.
+- **Nombres expresivos**: variables de una sola letra solo aceptables en `for i := range` o fórmulas matemáticas muy locales. Los parámetros de función deben ser auto-documentados.
+- **Sin magic numbers**: extraer constantes con nombre descriptivo (ej: `defaultInvoiceTTL = 30 * time.Minute` en lugar de `time.Minute * 30` inline).
+- **Return temprano**: preferir `if err != nil { return err }` al inicio de la función antes que bloques `else` profundos.
+- **Sin comentarios-obvio**: no comentar lo que el código ya expresa claramente (ej: `// incrementar contador` sobre `count++`). Los comentarios explican el *porqué*, no el *qué*.
+- **Zero valores explícitos**: cuando un valor cero de Go tiene significado de negocio, documentarlo con un comentario; no confundir `0`, `""`, `nil` por omisión.
+- **Exportar solo lo público**: funciones/métodos que no se usan fuera del paquete van en minúsculas. La superficie de API pública de cada paquete debe ser deliberada y mínima.
+- **DRY con interfaces, no copy-paste**: si dos bloques de código son idénticos, extraer a una función compartida; si difieren solo en el tipo, usar programación genérica (`[T any]`).
+
+### Frontend
 
 - Todo el código Go vive bajo `internal/` o `pkg/`. No exponer paquetes internos.
 - **Nunca** usar `// TODO`, `// MVP`, `// fake`, `// FIXME`, `// contactar admin` o etiquetas similares en código fuente.
@@ -55,7 +80,7 @@ require (
 
 ### Frontend
 
-- El scaffolding actual (`src/App.tsx`, `src/main.tsx`, `vite.config.ts`, `tsconfig.json`) está completamente vacío.
+- El scaffolding Vite + React 19 + TS + Tailwind v4 está **funcional**: `npm install` completado sin conflictos, `npm run build` exitoso (0 errores), dev server en `localhost:5173`. Framer Motion, React Router y Lucide React instalados. Implementación en progreso por `docs/plans/frontend-design-plan.md`.
 - Cuando se implemente el frontend: componentes en `src/components/`, tipos en `src/types/`, hooks en `src/hooks/`, llamadas API en `src/api/`, estilos en `src/styles/`.
 - Todas las llamadas API van bajo `/proxy/*`, autenticadas con `Authorization: Bearer <token>`.
 
@@ -113,7 +138,7 @@ frontend/
 ## 6. Base de datos
 
 - SQLite en `./data/usipipo.db` por defecto.
-- Migraciones embebidas en `internal/db/store.go`. No hay archivos de migración separados.
+- Migraciones embebidas en `internal/db/migrations.go`. No hay archivos de migración separados.
 - **Bug conocido**: `ensureDir()` no crea directorios — esto puede causar fallo si `DB_PATH` apunta a una ruta cuyo directorio no existe (ver Bug #3 en CONTEXT.md).
 - Tablas: `users`, `devices`, `traffic_samples`. Índices sobre `user_id` y `(device_id, timestamp)`.
 
@@ -194,17 +219,27 @@ volumes:
 
 ---
 
-## 11. Bugs conocidos
+## 11. Bugs conocidos y deuda técnica
 
-Ver §17 de CONTEXT.md. Resumen rápido:
+Resumen rápido (2026-05-22T22:48):
 
-| # | Archivo              | Descripción                                          | Estado      |
-|---|----------------------|------------------------------------------------------|-------------|
-| 1 | `internal/bot/handler.go` | `h.wgManager` nil — no se inicializa en constructor | pendiente   |
-| 2 | `docker/wg-exporter.Dockerfile` | `cmd/exporter/` no existe                    | pendiente   |
-| 3 | `internal/db/store.go`     | `ensureDir()` no crea directorios                 | pendiente   |
-| 4 | `frontend/src/*`           | Todo el código frontend está vacío               | pendiente   |
-| 5 | `§19 (pagos)`              | Endpoints de pago AÚN NO IMPLEMENTADOS            | pendiente   |
+| # | Archivo / Área            | Descripción                                          | Estado    | Prioridad |
+|---|---------------------------|------------------------------------------------------|-----------|-----------|
+| 1 | `internal/bot/handler.go` | `h.wgManager` nil — **resuelto** (inyectado en `main.go:71`) | ✅ cerrado | — |
+| 3 | `internal/db/`            | `ensureDir()` — **resuelto** (`os.MkdirAll`) | ✅ cerrado | — |
+| 5 | `internal/http/handlers/` | Endpoints TronDealer — **resuelto** | ✅ cerrado | — |
+| 6 | `pkg/models/` + `internal/wg/` | `Device`/`ClientConfig` duplicado — **resuelto por refactor** | ✅ cerrado | — |
+| 7 | `handlers.go` (~960 l)    | Excede límite 300 líneas — **resuelto** → 7 archivos | ✅ cerrado | — |
+| 8 | `store.go` (380 l)        | Excede límite 300 líneas — **resuelto** → 2 archivos | ✅ cerrado | — |
+| 9 | Bot Telegram | SendMessage no enviaba replies — **resuelto** | ✅ cerrado | — |
+| 9-a| `internal/http/middleware/` | AuthMiddleware cookie: verificado, compilación ✅ | ✅ cerrado | — |
+| 10 | `cmd/exporter/` / Dockerfile | `docker/wg-exporter.Dockerfile` apunta a ruta inexistente | 🔄 abierto | **P2** |
+| 11 | `scripts/vet.sh`          | Go 1.24 no instalado en host, solo vía Docker | 🔄 abierto | **P3** |
+| 12 | `uuid.go` / `genUUIDv4()` | Usaba `math/rand` — **resuelto** por `crypto/rand` RFC 4122 | ✅ cerrado | — |
+| 13 | Bot Telegram `/connect`   | `device` sin PSK guardado — pendiente | 🔄 abierto | **P2** |
+| 14 | `docs/plans/frontend-design-plan.md` | Plan de implementación frontend escrito | 📄 fase | — |
+
+> `go build ./...` ✅ | `go vet ./...` ✅ | CI/CD workflows creados | Dockerfile multi-arq corregido
 
 ---
 
@@ -215,5 +250,23 @@ Ver §17 de CONTEXT.md. Resumen rápido:
 - [ ] No se agregaron dependencias externas sin justificar
 - [ ] `go.mod` y `go.sum` sincronizados
 - [ ] Correspondencia entre cambios y descripción del commit
+- [ ] El código cumple los principios SOLID (§3) y las reglas de Clean Code (§3)
+- [ ] Cada archivo `.go` modificado no supera las 300 líneas
+- [ ] Ninguna función supera las 70 líneas
+- [ ] Profundidad de anidación ≤ 3 niveles en todo el código modificado
 - [ ] Si se tocan handlers/DB/WG: revisar §5 y §6 de este archivo
 - [ ] Si se tocan pagos: revisar §9 y §19 de CONTEXT.md
+
+---
+
+## 13. Roadmap — criterios de salida por fase
+
+| Fase | Criterio de salida |
+|------|-------------------|
+| ✅ Fase 1-A | Handlers/Store divididos → compilación y `go vet ./...` limpios |
+| ✅ Fase 1-B | UUID `crypto/rand` RFC 4122 → tests unitarios pasan |
+| ✅ Fase 3-A cookie sesión → **Fase 3-B frontend arranca después** (diseño aprobado, plan en `docs/plans/frontend-design-plan.md`, scaffolding listo) |
+| ⬜ Fase 1-C | CI/CD GitHub Actions completo + build multi-arq |
+| ⬜ Fase 4 | App Android conecta con backend vía `/proxy/*` |
+| ⬜ Fase 5 | Exporter Prometheus exponen métricasWG |
+

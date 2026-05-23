@@ -40,7 +40,9 @@ func NewManager(iface, cidr, endpoint string) (*Manager, error) {
 		return nil, fmt.Errorf("wireguard-tools no encontrado en PATH: %w", err)
 	}
 	_, ipnet, err := net.ParseCIDR(cidr)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 	return &Manager{iface: iface, endpoint: endpoint, nextFree: ipnet}, nil
 }
 
@@ -104,36 +106,27 @@ func (m *Manager) DevicePeers() ([]PeerInfo, error) {
 	return parseWgShow(string(out)), nil
 }
 
-// parseWgShow parsea la salida de "wg show <iface> transfer".
-// Formato nativo (binario): no hay formato CSV. Usamos wg show <iface> dump en su lugar.
+// parseWgShow parsea la salida de 'wg show <iface> transfer': cada línea es pubkey<TAB>rx_bytes<TAB>tx_bytes
 func parseWgShow(s string) []PeerInfo {
-	// parseamos formato "wg show <iface> dump":
-	// public-key  <key>
-	// preshared-key <key>
-	// endpoint  <ip>:port
-	// allowed-ips  10.66.66.3/32
-	// latest-handshake 1744090001
-	// transfer-rx  123456
-	// transfer-tx  789012
 	lines := strings.Split(s, "\n")
-
 	var peers []PeerInfo
-	var pi PeerInfo
 	for _, l := range lines {
-		fields := strings.Fields(l)
-		if len(fields) < 2 { continue }
-
-		switch fields[0] {
-		case "public-key":
-			if pi.PublicKey != "" { peers = append(peers, pi) }
-			pi = PeerInfo{PublicKey: fields[1]}
-		case "transfer-rx":
-			if n, err := strconv.ParseUint(fields[1], 10, 64); err == nil { pi.Rx = n }
-		case "transfer-tx":
-			if n, err := strconv.ParseUint(fields[1], 10, 64); err == nil { pi.Tx = n }
+		l = strings.TrimSpace(l)
+		if l == "" {
+			continue
 		}
+		fields := strings.Fields(l)
+		if len(fields) < 3 {
+			continue
+		}
+		pk := fields[0]
+		rx, err1 := strconv.ParseUint(fields[1], 10, 64)
+		tx, err2 := strconv.ParseUint(fields[2], 10, 64)
+		if err1 != nil || err2 != nil {
+			continue
+		}
+		peers = append(peers, PeerInfo{PublicKey: pk, Rx: rx, Tx: tx})
 	}
-	if pi.PublicKey != "" { peers = append(peers, pi) }
 	return peers
 }
 
@@ -143,7 +136,7 @@ func (m *Manager) NextFreeIP(existing map[string]bool) (net.IP, error) {
 	_, bits := m.nextFree.Mask.Size()
 	hostBits := 32 - bits
 
-	for i := 2; i < (1 << hostBits) - 1; i++ {
+	for i := 2; i < (1<<hostBits)-1; i++ {
 		cand := incrementIP(base.To4(), i)
 		if !existing[cand.String()] {
 			return cand, nil
@@ -154,7 +147,9 @@ func (m *Manager) NextFreeIP(existing map[string]bool) (net.IP, error) {
 
 func incrementIP(base net.IP, offset int) net.IP {
 	ip4 := base.To4()
-	if ip4 == nil { return base }
+	if ip4 == nil {
+		return base
+	}
 	val := new(big.Int).SetBytes(ip4)
 	val.Add(val, big.NewInt(int64(offset)))
 	b := val.Bytes()
@@ -187,9 +182,10 @@ func GenerateKeyPair() (pub string, priv string, err error) {
 	return pub, priv, nil
 }
 
-// ClientConfig es la configuración completa para el archivo .conf del cliente.
+// ClientConfig es el archivo de configuración WireGuard listo para el cliente.
+// PrivateKey es privada (no exportada) — solo se accede vía String() o getters.
 type ClientConfig struct {
-	PrivateKey string
+	privateKey string // NUNCA se expone por JSON; solo visible en el .conf
 	Address    string // IP virtual + /mask, ej "10.66.66.5/24"
 	DNS        string // ej "10.66.66.1"
 	PublicKey  string
@@ -198,20 +194,41 @@ type ClientConfig struct {
 	PSK        string
 }
 
+// NewClientConfig es el único constructor público de ClientConfig.
+func NewClientConfig(privateKey, address, dns, publicKey, endpoint, allowedIPs, psk string) ClientConfig {
+	return ClientConfig{
+		privateKey: privateKey,
+		Address:    address,
+		DNS:        dns,
+		PublicKey:  publicKey,
+		Endpoint:   endpoint,
+		AllowedIPs: allowedIPs,
+		PSK:        psk,
+	}
+}
+
 // ClientConf genera el texto .conf listo para que el usuario lo copie o descargue.
 func (c ClientConfig) String() string {
 	var sb strings.Builder
-	if c.PrivateKey != "" {
+	if c.privateKey != "" {
 		sb.WriteString("[Interface]\n")
-		sb.WriteString("PrivateKey = " + c.PrivateKey + "\n")
-		if c.Address != "" { sb.WriteString("Address = " + c.Address + "\n") }
-		if c.DNS != ""    { sb.WriteString("DNS = " + c.DNS + "\n") }
+		sb.WriteString("PrivateKey = " + c.privateKey + "\n")
+		if c.Address != "" {
+			sb.WriteString("Address = " + c.Address + "\n")
+		}
+		if c.DNS != "" {
+			sb.WriteString("DNS = " + c.DNS + "\n")
+		}
 		sb.WriteString("\n")
 	}
 	sb.WriteString("[Peer]\n")
 	sb.WriteString("PublicKey = " + c.PublicKey + "\n")
-	if c.PSK != "" { sb.WriteString("PresharedKey = " + c.PSK + "\n") }
-	if c.Endpoint != "" { sb.WriteString("Endpoint = " + c.Endpoint + "\n") }
+	if c.PSK != "" {
+		sb.WriteString("PresharedKey = " + c.PSK + "\n")
+	}
+	if c.Endpoint != "" {
+		sb.WriteString("Endpoint = " + c.Endpoint + "\n")
+	}
 	sb.WriteString("AllowedIPs = " + c.AllowedIPs + "\n")
 	return sb.String()
 }

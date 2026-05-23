@@ -1,0 +1,110 @@
+/* =========================================================
+   uSipipo Proxy — Design Tokens (Glassmorphism Dark)
+   ========================================================= */
+
+/* ── Fonts ──────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+/* ── Reset / base ───────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--color-bg-0);
+  color: var(--color-text-1);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── Surfaces (background depths) ───────────────────────── */
+:root {
+  --color-bg-0: #050a14;
+  --color-bg-1: #0d1321;
+  --color-bg-2: #131c31;
+  --color-bg-3: #1a2540;
+
+  /* ── Glass surface tokens ─────────────────────────────── */
+  --glass-bg:           rgba(13, 19, 33, 0.65);
+  --glass-border:       rgba(59, 130, 246, 0.15);
+  --glass-highlight:    rgba(59, 130, 246, 0.08);
+  --glass-blur:         blur(20px) saturate(160%);
+  --glass-blur-light:   blur(12px) saturate(150%);
+
+  /* ── Primary — Electric Blue ─────────────────────────── */
+  --color-primary-50:  #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+
+  /* ── Accent — cyan ───────────────────────────────────── */
+  --color-accent: #06d6a0;
+
+  /* ── Text ────────────────────────────────────────────── */
+  --color-text-1: #f0f4ff;
+  --color-text-2: #8896b3;
+  --color-text-3: #4f6391;
+
+  /* ── Status ──────────────────────────────────────────── */
+  --status-ok:   #06d6a0;
+  --status-warn: #f59e0b;
+  --status-err:  #ef4444;
+
+  /* ── Glows ───────────────────────────────────────────── */
+  --glow-primary:  0 0 24px rgba(59,  130,  246, 0.35);
+  --glow-accent:   0 0 24px rgba(6,  214,  160, 0.25);
+  --glow-error:    0 0 16px rgba(239,  68,   68, 0.30);
+
+  /* ── Typography ──────────────────────────────────────── */
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-body:    'DM Sans', system-ui, sans-serif;
+  --font-mono:    'JetBrains Mono', 'Fira Code', monospace;
+
+  /* ── Spacing scale (4px base) ────────────────────────── */
+  --space-05:  0.125rem;   /* 2px  */
+  --space-1:   0.25rem;    /* 4px  */
+  --space-2:   0.5rem;     /* 8px  */
+  --space-3:   0.75rem;    /* 12px */
+  --space-4:   1rem;       /* 16px */
+  --space-5:   1.25rem;    /* 20px */
+  --space-6:   1.5rem;     /* 24px */
+  --space-8:   2rem;       /* 32px */
+  --space-10:  2.5rem;     /* 40px */
+  --space-12:  3rem;       /* 48px */
+  --space-16:  4rem;       /* 64px */
+  --space-20:  5rem;       /* 80px */
+  --space-24:  6rem;       /* 96px */
+}
+
+/* ── Animation keyframes (CSS-driven only) ─────────────── */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+@keyframes pulse-ring {
+  0%   { transform: scale(0.85); opacity: 1; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}

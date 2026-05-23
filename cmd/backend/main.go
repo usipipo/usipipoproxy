@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log/slog"
@@ -11,9 +12,11 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/usipipo/usipipoproxy/internal/bot"
 	"github.com/usipipo/usipipoproxy/internal/db"
 	"github.com/usipipo/usipipoproxy/internal/http/handlers"
+	"github.com/usipipo/usipipoproxy/internal/http/middleware"
 	"github.com/usipipo/usipipoproxy/internal/wg"
 	"github.com/usipipo/usipipoproxy/pkg/config"
 	"github.com/usipipo/usipipoproxy/pkg/models"
@@ -36,16 +39,28 @@ func main() {
 
 	cfg := config.MustLoad()
 	level := slog.LevelInfo
-	if os.Getenv("LOG_LEVEL") == "debug" { level = slog.LevelDebug }
+	if os.Getenv("LOG_LEVEL") == "debug" {
+		level = slog.LevelDebug
+	}
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: level}))
 	slog.SetDefault(logger)
 
 	// ─── BD ────────────────────────────────────────────────────────────────────
 	store, err := db.NewStore(cfg.DBPath)
-	if err != nil { slog.Error("db init failed", "err", err); os.Exit(1) }
+	if err != nil {
+		slog.Error("db init failed", "err", err)
+		os.Exit(1)
+	}
 
-	if migrate  { slog.Info("migraciones aplicadas, saliendo"); return }
-	if seed     { runSeeds(store); slog.Info("seeds aplicadas, saliendo"); return }
+	if migrate {
+		slog.Info("migraciones aplicadas, saliendo")
+		return
+	}
+	if seed {
+		runSeeds(store)
+		slog.Info("seeds aplicadas, saliendo")
+		return
+	}
 
 	// ─── WireGuard Manager ──────────────────────────────────────────────────────
 	endpoint := "165.140.241.96:64000"
@@ -59,23 +74,39 @@ func main() {
 	}
 
 	// ─── Handlers ──────────────────────────────────────────────────────────────
-	authH    := handlers.NewAuthHandler(store, cfg.TelegramBotToken, cfg.JWTSecret)
-	healthH  := handlers.NewHealthHandler()
+	authH := handlers.NewAuthHandler(store, cfg.TelegramBotToken, cfg.JWTSecret)
+	healthH := handlers.NewHealthHandler()
 	devicesH := handlers.NewDevicesHandler(store, wgMgr, endpoint)
-	botH     := bot.NewWebhookHandler(store, "usipipo.dpdns.org",
-		fmt.Sprintf("%s:%d", cfg.WGEndpointHost, cfg.WGEndpointPort))
+
+	// Payments / TronDealer
+	paymentQueue := make(chan handlers.PaymentEvent, 256)
+	paymentsH := handlers.NewPaymentHandlers(store, cfg.TronDealerAPIKey, cfg.TronDealerWebhookSecret, cfg.TronDealerBaseURL, paymentQueue)
+	handlers.StartPaymentWorker(paymentsH, paymentQueue)
+
+	botH := bot.NewWebhookHandler(store, wgMgr, "usipipo.dpdns.org",
+		fmt.Sprintf("%s:%d", cfg.WGEndpointHost, cfg.WGEndpointPort),
+		cfg.TelegramBotToken)
 
 	mux := http.NewServeMux()
 
 	// ─── API bajo prefijo /proxy ─────────────────────────────────────────────────
 	const prefix = "/proxy"
+
+	// Rutas públicas (sin JWT)
 	mux.HandleFunc(prefix+"/auth/telegram", authH.Handler)
+	mux.HandleFunc(prefix+"/auth/cookie", setSessionCookieHandler(store, cfg.JWTSecret))
 	mux.HandleFunc(prefix+"/health", healthH.Handler)
 	mux.HandleFunc(prefix+"/openapi.json", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		_, _ = w.Write([]byte(`{"openapi":"3.0.0","info":{"title":"uSipipo API","version":"0.1.0"}}`))
 	})
-	mux.HandlePrefix(prefix+"/devices", devicesH.Router)
+
+	// Rutas protegidas por JWT
+	protected := http.NewServeMux()
+	protected.Handle(prefix+"/devices", http.StripPrefix(prefix+"/devices", http.HandlerFunc(devicesH.Router)))
+	protected.Handle(prefix+"/payments", http.StripPrefix(prefix+"/payments", http.HandlerFunc(paymentsH.Router)))
+	protected.HandleFunc("POST /proxy/webhooks/trondealer", handlers.NewTronDealerWebhookHandler(store, cfg.TronDealerWebhookSecret, paymentQueue).Handler)
+	mux.Handle("/", middleware.AuthMiddleware(store, cfg.JWTSecret, protected))
 
 	// ─── Webhook Telegram ───────────────────────────────────────────────────────
 	mux.HandleFunc("POST /bot/telegram", botH.Handler)
@@ -105,7 +136,8 @@ func main() {
 		slog.Info("uSipipo Proxy backend",
 			"addr", srv.Addr, "version", version, "build", buildStamp)
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			slog.Error("ListenAndServe", "err", err); os.Exit(1)
+			slog.Error("ListenAndServe", "err", err)
+			os.Exit(1)
 		}
 	}()
 
@@ -131,7 +163,59 @@ func loggingMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-var betaUsers = []struct{ tgID int64; name string }{
+// setSessionCookieHandler recibe un JWT por body y lo establece como cookie HttpOnly.
+// POST /proxy/auth/cookie  body: {"token": "<jwt>"}
+func setSessionCookieHandler(store *db.Store, jwtSecret string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+		var req struct {
+			Token string `json:"token"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.Token == "" {
+			http.Error(w, "token required", http.StatusBadRequest)
+			return
+		}
+		// Validar JWT y extraer claims
+		tok, err := jwt.Parse(req.Token, func(t *jwt.Token) (any, error) {
+			if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, jwt.ErrSignatureInvalid
+			}
+			return []byte(jwtSecret), nil
+		})
+		if err != nil || !tok.Valid {
+			http.Error(w, "invalid token", http.StatusUnauthorized)
+			return
+		}
+		claims, ok := tok.Claims.(jwt.MapClaims)
+		if !ok {
+			http.Error(w, "invalid claims", http.StatusUnauthorized)
+			return
+		}
+		uidF, ok := claims["uid"].(float64)
+		if !ok {
+			http.Error(w, "invalid uid", http.StatusUnauthorized)
+			return
+		}
+		// Verificar que el usuario existe
+		if _, err := store.GetUserByID(int64(uidF)); err != nil {
+			http.Error(w, "user not found", http.StatusUnauthorized)
+			return
+		}
+		exp := time.Unix(int64(claims["exp"].(float64)), 0)
+		middleware.SetSessionCookie(w, req.Token, exp)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_ = json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+	}
+}
+
+var betaUsers = []struct {
+	tgID int64
+	name string
+}{
 	{891835105, "mowgli"},
 	{634873279, "ersu"},
 }
